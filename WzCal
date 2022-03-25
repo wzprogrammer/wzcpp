@@ -1,0 +1,107 @@
+#include<stdlib.h>
+#include<iostream>
+#include<cmath>
+#define MAX 100
+class Cal
+{
+private:
+	double cal(char* str, int len) {
+		//括号深度
+		int level = 0;
+		//操作数栈
+		double nums[MAX];
+		int numIndex = 0;
+		//符号栈
+		char operators[MAX];
+		int operIndex = 0;
+		//当前处理str index
+		int index = 0;
+
+
+		while (index < len) {
+			if (isOperator(str[index])) {
+				operators[operIndex++] = str[index++];
+			}
+			else if (isOperator(str[index])) {
+
+				index++;
+			}
+			else {
+				double num = 0;
+				bool frac = false;
+				int fracDigits = -1;
+				while (index >= len || (!isOperator(str[index]) && !isOperator(str[index]))) {
+					if (isDigit(str[index])) {
+						if (!frac) {
+							num = num * 10 + str[index] - '0';
+						}
+						else {
+							num = num + (str[index] - '0') * pow(10, fracDigits);
+							fracDigits--;
+						}
+					}
+					else if (str[index] == '.') {
+						index++;
+						frac = true;
+					}
+				}
+				//3种情况
+				//1 str结尾
+				//2  )
+				//3 操作符
+				if (index >= len) {
+					while (operIndex) {
+						double tmp = calTwo(nums[numIndex - 1], num, operators[operIndex - 1]);
+						nums[numIndex - 1] = tmp;
+						operIndex--;
+					}
+				}
+				else if (str[index] == ')') {
+					while (operators[operIndex - 1] != '(') {
+						double tmp = calTwo(nums[numIndex - 1], num, operators[operIndex - 1]);
+						nums[numIndex - 1] = tmp;
+						operIndex--;
+					}
+					//skip )
+					index++;
+					//skip (
+					operIndex--;
+				}
+				else {
+					if (!operIndex || isLess(operators[operIndex - 1], str[index])) {
+
+					}
+				}
+			}
+		}
+	}
+	bool isOperator(char c) {
+		return c == '+' || c == '-' || c == '*' || c == '/';
+	}
+	bool isBracket(char c) {
+		return c == '(' || c == ')';
+	}
+	bool isDigit(char c) {
+		return c >= '0' && c <= '9';
+	}
+	bool isLess(char first,char second) {
+		return (first == '+' || first == '-') && (second == '*' || second == '/');
+	}
+	double calTwo(double first, double second, char oper) {
+		switch (oper)
+		{
+		case '+':
+			return first + second;
+		case '-':
+			return first - second;
+		case '*':
+			return first * second;
+		case '/':
+			return first / second;
+		}
+	}
+};
+
+void main() {
+	std::cout << (10 ^ 2);
+}
