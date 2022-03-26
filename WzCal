@@ -1,4 +1,5 @@
 #include<cmath>
+#include<memory>
 #define MAX 100
 class Cal
 {
@@ -114,13 +115,17 @@ public:
 class Cal1
 {
 public:
+	const char* s;
+	bool* flag;
+	double* result;
 	double cal1(const char* str, int len) {
-
+		s = str;
 		//左括号index
 		int leftIndex = len - 1;
 
-		bool* flag = new bool[len];
-		double *result = new double[len];
+		flag = new bool[len];
+		memset(flag, false, len);
+		result = new double[len];
 
 		while (leftIndex >= 0) {
 			if (str[leftIndex] == '(')
@@ -134,32 +139,21 @@ public:
 					break;
 				rightIndex++;
 			}
-			char* tmp = new char[rightIndex - leftIndex - 1];
-			int len = 0;
-			for (int i = leftIndex+1; i < rightIndex - 1;) {
-				if (!flag[i]) {
-					tmp[len++] = str[i++];
-				}
-				else {
-					tmp[len++] = str[i++];
-					while (flag[i]) {
-						i++;
-					}
-				}
-			}
-			double bracket = calStrNoBracket(tmp, len);
-			for (int i = leftIndex; i <=rightIndex; i++) {
+
+			double bracket = calStrNoBracket1(leftIndex + 1, rightIndex - 1);
+			for (int i = leftIndex; i <= rightIndex; i++) {
 				flag[i] = true;
 			}
-			result[leftIndex]=
+			result[leftIndex] = bracket;
 
+			leftIndex--;
 			while (leftIndex >= 0) {
 				if (s[leftIndex] == '(')
 					break;
 				leftIndex--;
 			}
 		}
-
+		return calStrNoBracket1(0, len - 1);
 	}
 
 	double calStrNoBracket(const char* str, int len) {
@@ -226,7 +220,7 @@ public:
 		return nums[0];
 	}
 
-	double calStrNoBracket1(const char* str, int len) {
+	double calStrNoBracket1(int leftIndex, int rightIndex) {
 		//操作数栈
 		double nums[MAX];
 		//下一个插入位置
@@ -238,41 +232,48 @@ public:
 		int operIndex = 0;
 
 		//str当前处理 index
-		int index = 0;
+		int index = leftIndex;
 
-		while (index < len) {
+		while (index <= rightIndex) {
 			//操作符直接入栈
-			if (isOperator(str[index])) {
-				operators[operIndex++] = str[index++];
+			if (isOperator(s[index])) {
+				operators[operIndex++] = s[index++];
 			}
 			else {
-				if()
 				double num = 0;
-				bool frac = false;
-				int fracDigits = -1;
-
-				//这个while读取数字到num中
-				while (index < len && !isOperator(str[index])) {
-					if (isDigit(str[index])) {
-						if (!frac) {
-							num = num * 10 + str[index] - '0';
-						}
-						else {
-							num = num + (str[index] - '0') * pow(10, fracDigits);
-							fracDigits--;
-						}
-					}
-					else if (str[index] == '.') {
-						frac = true;
-					}
-					index++;
+				if (flag[index]) {
+					num = result[index];
+					while (flag[index] && index <= rightIndex)
+						index++;
 				}
+				else {
+					bool frac = false;
+					int fracDigits = -1;
+
+					//这个while读取数字到num中
+					while (index <= rightIndex && !isOperator(s[index])) {
+						if (isDigit(s[index])) {
+							if (!frac) {
+								num = num * 10 + s[index] - '0';
+							}
+							else {
+								num = num + (s[index] - '0') * pow(10, fracDigits);
+								fracDigits--;
+							}
+						}
+						else if (s[index] == '.') {
+							frac = true;
+						}
+						index++;
+					}
+				}
+
 				nums[numIndex++] = num;
 
 				//对当前数字的下一个字符分2种情况
 				//1 str结尾        计算->结束				
 				//2 操作符         判断前一个操作符优先级是否小于下一个 否 计算->继续
-				if (index >= len) {
+				if (index > rightIndex) {
 					while (operIndex > 0) {
 						double tmp = calTwo(nums[numIndex - 1], nums[numIndex - 2], operators[operIndex - 1]);
 						nums[numIndex - 2] = tmp;
@@ -280,7 +281,7 @@ public:
 						numIndex--;
 					}
 				}
-				else if (operIndex && notLess(operators[operIndex - 1], str[index])) {
+				else if (operIndex && notLess(operators[operIndex - 1], s[index])) {
 					double tmp = calTwo(nums[numIndex - 1], nums[numIndex - 2], operators[operIndex - 1]);
 					nums[numIndex - 2] = tmp;
 					operIndex--;
@@ -318,6 +319,8 @@ public:
 };
 
 void main() {
-	Cal c;
-	c.cal("(1.1+(1.1+1.1))*3+1.1*(1+1)", 27);
+	Cal1 c;
+	//c.cal1("(1.1+(1.1+1.1))*3+1.1*(1+1)", 27);
+	c.cal1("1.1*(1.1+1)", 11);
+
 }
