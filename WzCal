@@ -63,8 +63,8 @@ public:
 					while (operIndex > 0) {
 						calTwoInStack();
 					}
-				}				
-				else if (operIndex && operators[operIndex - 1]!='(' && notLess(operators[operIndex - 1], str[index])) {
+				}
+				else if (operIndex && operators[operIndex - 1] != '(' && notLess(operators[operIndex - 1], str[index])) {
 					calTwoInStack();
 				}
 			}
@@ -108,6 +108,212 @@ public:
 		nums[numIndex - 2] = tmp;
 		operIndex--;
 		numIndex--;
+	}
+};
+
+class Cal1
+{
+public:
+	double cal1(const char* str, int len) {
+
+		//左括号index
+		int leftIndex = len - 1;
+
+		bool* flag = new bool[len];
+		double *result = new double[len];
+
+		while (leftIndex >= 0) {
+			if (str[leftIndex] == '(')
+				break;
+			leftIndex--;
+		}
+		while (leftIndex >= 0) {
+			int rightIndex = leftIndex + 1;
+			while (rightIndex < len) {
+				if (str[rightIndex] == ')')
+					break;
+				rightIndex++;
+			}
+			char* tmp = new char[rightIndex - leftIndex - 1];
+			int len = 0;
+			for (int i = leftIndex+1; i < rightIndex - 1;) {
+				if (!flag[i]) {
+					tmp[len++] = str[i++];
+				}
+				else {
+					tmp[len++] = str[i++];
+					while (flag[i]) {
+						i++;
+					}
+				}
+			}
+			double bracket = calStrNoBracket(tmp, len);
+			for (int i = leftIndex; i <=rightIndex; i++) {
+				flag[i] = true;
+			}
+			result[leftIndex]=
+
+			while (leftIndex >= 0) {
+				if (s[leftIndex] == '(')
+					break;
+				leftIndex--;
+			}
+		}
+
+	}
+
+	double calStrNoBracket(const char* str, int len) {
+		//操作数栈
+		double nums[MAX];
+		//下一个插入位置
+		int numIndex = 0;
+
+		//符号栈
+		char operators[MAX];
+		//下一个插入位置
+		int operIndex = 0;
+
+		//str当前处理 index
+		int index = 0;
+
+		while (index < len) {
+			//操作符直接入栈
+			if (isOperator(str[index])) {
+				operators[operIndex++] = str[index++];
+			}
+			else {
+				double num = 0;
+				bool frac = false;
+				int fracDigits = -1;
+
+				//这个while读取数字到num中
+				while (index < len && !isOperator(str[index])) {
+					if (isDigit(str[index])) {
+						if (!frac) {
+							num = num * 10 + str[index] - '0';
+						}
+						else {
+							num = num + (str[index] - '0') * pow(10, fracDigits);
+							fracDigits--;
+						}
+					}
+					else if (str[index] == '.') {
+						frac = true;
+					}
+					index++;
+				}
+				nums[numIndex++] = num;
+
+				//对当前数字的下一个字符分2种情况
+				//1 str结尾        计算->结束				
+				//2 操作符         判断前一个操作符优先级是否小于下一个 否 计算->继续
+				if (index >= len) {
+					while (operIndex > 0) {
+						double tmp = calTwo(nums[numIndex - 1], nums[numIndex - 2], operators[operIndex - 1]);
+						nums[numIndex - 2] = tmp;
+						operIndex--;
+						numIndex--;
+					}
+				}
+				else if (operIndex && notLess(operators[operIndex - 1], str[index])) {
+					double tmp = calTwo(nums[numIndex - 1], nums[numIndex - 2], operators[operIndex - 1]);
+					nums[numIndex - 2] = tmp;
+					operIndex--;
+					numIndex--;
+				}
+			}
+		}
+		return nums[0];
+	}
+
+	double calStrNoBracket1(const char* str, int len) {
+		//操作数栈
+		double nums[MAX];
+		//下一个插入位置
+		int numIndex = 0;
+
+		//符号栈
+		char operators[MAX];
+		//下一个插入位置
+		int operIndex = 0;
+
+		//str当前处理 index
+		int index = 0;
+
+		while (index < len) {
+			//操作符直接入栈
+			if (isOperator(str[index])) {
+				operators[operIndex++] = str[index++];
+			}
+			else {
+				if()
+				double num = 0;
+				bool frac = false;
+				int fracDigits = -1;
+
+				//这个while读取数字到num中
+				while (index < len && !isOperator(str[index])) {
+					if (isDigit(str[index])) {
+						if (!frac) {
+							num = num * 10 + str[index] - '0';
+						}
+						else {
+							num = num + (str[index] - '0') * pow(10, fracDigits);
+							fracDigits--;
+						}
+					}
+					else if (str[index] == '.') {
+						frac = true;
+					}
+					index++;
+				}
+				nums[numIndex++] = num;
+
+				//对当前数字的下一个字符分2种情况
+				//1 str结尾        计算->结束				
+				//2 操作符         判断前一个操作符优先级是否小于下一个 否 计算->继续
+				if (index >= len) {
+					while (operIndex > 0) {
+						double tmp = calTwo(nums[numIndex - 1], nums[numIndex - 2], operators[operIndex - 1]);
+						nums[numIndex - 2] = tmp;
+						operIndex--;
+						numIndex--;
+					}
+				}
+				else if (operIndex && notLess(operators[operIndex - 1], str[index])) {
+					double tmp = calTwo(nums[numIndex - 1], nums[numIndex - 2], operators[operIndex - 1]);
+					nums[numIndex - 2] = tmp;
+					operIndex--;
+					numIndex--;
+				}
+			}
+		}
+		return nums[0];
+	}
+
+	bool isOperator(char c) {
+		return c == '+' || c == '-' || c == '*' || c == '/';
+	}
+	bool isDigit(char c) {
+		return c >= '0' && c <= '9';
+	}
+	bool notLess(char first, char second) {
+		return (first == '*' || first == '/') && (second == '+' || second == '-');
+	}
+	double calTwo(double first, double second, char oper) {
+		switch (oper)
+		{
+		case '+':
+			return first + second;
+		case '-':
+			return first - second;
+		case '*':
+			return first * second;
+		case '/':
+			//todo second=0
+			return first / second;
+		}
+		return 0;
 	}
 };
 
