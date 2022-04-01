@@ -5,4 +5,7 @@ int main() {
 	cal1 c;
 	double result = c.cal(s, str.length());
 	std::cout << result;
+	
+	int a = 123;
+	printf("%04d", a);
 }
