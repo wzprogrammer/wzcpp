@@ -8,4 +8,5 @@ int main() {
 	
 	int a = 123;
 	printf("%04d", a);
+	//输出为 0123
 }
