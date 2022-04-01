@@ -1,0 +1,6 @@
+int main() {
+	std::string str;
+	std::cin >> str;
+	const char* s = str.c_str();
+	cal(s, str.length());
+}
