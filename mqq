@@ -3,5 +3,6 @@ int main() {
 	std::cin >> str;
 	const char* s = str.c_str();
 	cal1 c;
-	c.cal(s, str.length());
+	double result = c.cal(s, str.length());
+	std::cout << result;
 }
