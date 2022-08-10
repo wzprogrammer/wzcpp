@@ -7,10 +7,10 @@ static struct task_struct* current;
 #define u64 long
 #define u32 long
 #define NICE_0_WEIGHT 1024
-u64 min1(u64 u1, u64 u2) {
+u64 min(u64 u1, u64 u2) {
 	return -1;
 }
-u64 max1(u64 u1, u64 u2) {
+u64 max(u64 u1, u64 u2) {
 	return -1;
 }
 
@@ -94,13 +94,10 @@ struct task_struct* pick_next_task_fair(struct rq* rq, struct task_struct* prev)
 	//2 update statis
 
 	//1
-	struct sched_entity se = prev->se;
+	struct sched_entity* se = &prev->se;
 	struct cfs_rq* cfs;
 	if (prev) {
-		if (se.on_rq) {
-			update_cur();
-			//enqueue;
-		}
+		put_prev_entity(cfs, se);
 	}
 	struct task_struct* leftmost;
 	if (leftmost) {
@@ -111,6 +108,15 @@ struct task_struct* pick_next_task_fair(struct rq* rq, struct task_struct* prev)
 	return NULL;
 }
 
+static void put_prev_entity(struct cfs_rq* cfs_rq, struct sched_entity* se) {
+	//?
+	if (se->on_rq)
+		update_cur();
+	if (se->on_rq) {
+		//__enqueue_task();
+	}
+	cfs_rq->curr = NULL;
+}
 int main() {
 
 }
