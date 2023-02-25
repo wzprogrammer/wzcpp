@@ -1,7 +1,7 @@
 /*
 1 cfs_rq->avg->load_sum有什么用 为什么和se->avg->load_sum计算方式不同
  
-
+2 hook点实现逻辑
 
 */
 
