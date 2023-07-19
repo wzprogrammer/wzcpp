@@ -1,0 +1,3 @@
+arch_cmpXchg
+arch_xchg
+volatile
