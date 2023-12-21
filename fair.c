@@ -120,3 +120,22 @@ static void put_prev_entity(struct cfs_rq* cfs_rq, struct sched_entity* se) {
 int main() {
 
 }
+
+
+/*
+1 src dsc imbalance数量
+2 migrate tasks
+添加的优化点
+    can_migrate
+      cache
+    need_break
+    LBF_DST_PINNED
+    	
+    
+
+
+
+
+
+
+*/
