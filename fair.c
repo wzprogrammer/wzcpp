@@ -144,16 +144,43 @@ int main() {
 load_balance
 
 
-update_sg_lb_stats
-  for_cpu_span
-    sgs+=load
-    sgs+=runable
-    sgs+=util
+find_busiest_group
+	//是否load_balance的比较算法
+	update_sd_lb_stats
+		更新sd下面所有sg的stats，选出busiest
+		更新自己的cpu_capacity
+		//busiest的比较算法
+		if (local_group)
+			update_group_capacity(env->sd, env->dst_cpu);
+		for_each_group
+			update_sg_lb_stats
+				for_cpu_span
+					sgs+=load
+					sgs+=runable
+					sgs+=util
 
-    sgs+=nr_running
-    sgs+=h_nr_running
+					sgs+=nr_running
+					sgs+=h_nr_running
 
-    SG_OVERLOAD
-    SG_OVERUTILIZED
+					SG_OVERLOAD
+					SG_OVERUTILIZED
+				sgs->group_type = group_classify
+					group_overloaded
+					group_imbalanced
+					group_fully_busy
+					group_has_spare
+			update_sd_pick_busiest
+		
+		update rd->overload
+		update rd->overutilized
+
+find_busiest_queue
+	//busiest的比较算法
+
+
+load_banlance触发
+scheduler_tick
+	trigger_load_balance 触发irq
+run_rebalance_domains irq处理
 
 
